@@ -1,0 +1,60 @@
+import numpy as np
+
+
+
+# insert matrix here original_matrix = 
+
+pivots = [i for i in range(original_matrix.shape[0] - 1)]
+
+matrix = original_matrix.copy()
+
+for pivot in pivots:
+    row_indices = list(range(pivot + 1, 4))
+    for row_index in row_indices:
+        coefficient = matrix[row_index, pivot] / matrix[pivot, pivot]
+        old_row = matrix[row_index]
+        new_row = []
+        for i in range(len(old_row)):
+            new_element = old_row[i] - coefficient * matrix[pivot][i]
+            new_row.append(new_element)
+        matrix[row_index] = new_row
+
+
+for column_number in range(0, 3):
+    column_number = 3 - column_number
+    fixed_row_number = column_number
+    for row_number in range(0, column_number):
+        coefficient = matrix[fixed_row_number, column_number] / matrix[row_number, column_number]
+        old_row = matrix[row_number]
+        new_row = []
+        for i in range(len(old_row)):
+            new_element = matrix[fixed_row_number][i] - coefficient * old_row[i]
+            new_row.append(new_element)
+        matrix[row_number] = new_row
+        
+matrix[0, [2, 3]] = 0 # Round off error adjustment from H2 gas
+
+matrix[1, [2, 3]] = 0 # Round off error adjustment from H2 gas
+
+matrix[2, 3] = 0 # Round off error adjustment from H2 gas
+
+matrix[2, 1] = 0 # Round off error adjustment from N2 gas
+
+matrix[3, 1] = 0 # Round off error adjustment from N2 gas
+
+print(matrix)
+
+answer_vector = []
+
+for row_index in range(matrix.shape[0]):
+    numbers = matrix[row_index]
+    for number in numbers[:-1]:
+        if number != 0:
+            answer = numbers[-1] / number
+            answer_vector.append(answer)
+
+answer_mapper = {0 : "B", 1: "C", 2: "D", 3: "E"}
+
+for answer in answer_vector:
+    index = answer_vector.index(answer)
+    print(f"The coefficient of {answer_mapper[index]} is {answer}")
