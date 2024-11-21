@@ -1,0 +1,55 @@
+import numpy as np
+
+
+
+
+# Insert matrix here original_matrix = 
+
+pivots = [i for i in range(original_matrix.shape[0] - 1)]
+
+matrix = original_matrix.copy()
+
+for pivot in pivots:
+    row_indices = list(range(pivot + 1, 4))
+    coef = matrix[pivot, pivot]
+    row_coefficients = [[matrix[row_index, pivot], row_index] for row_index in row_indices]
+    for info in row_coefficients:
+        if abs(info[0]) > abs(coef):
+            matrix[[pivot, info[1]]] = matrix[[info[1], pivot]]
+    for row_index in row_indices:
+        coefficient = matrix[row_index, pivot] / matrix[pivot, pivot]
+        old_row = matrix[row_index]
+        new_row = []
+        for i in range(len(old_row)):
+            new_element = old_row[i] - coefficient * matrix[pivot][i]
+            new_row.append(new_element)
+        matrix[row_index] = new_row
+
+
+matrix[3, 1] = 0 # Replaced this element becuase original calculation gave an extremely small number from
+                 # round-off error.
+
+answers = []
+
+for i in range(4):
+    i = 3 - i
+    if len(answers) == 0:
+        answer = matrix[i, 4] / matrix[i, i]
+        answers.append(answer)
+    else:
+        added_terms = []
+        for k in answers:
+            added_term = matrix[i, 3 - answers.index(k)] * k
+            added_terms.append(added_term)
+        total = sum(added_terms) * -1
+        answer = (matrix[i, 4] + total) / matrix[i, i]
+        answers.append(answer)
+
+variable_matcher = {0: "E", 1: "D", 2: "C", 3: "B"}
+
+for answer in answers:
+    index = answers.index(answer)
+    print(f"The {variable_matcher[index]}th term is", answer)
+
+
+print(matrix)
